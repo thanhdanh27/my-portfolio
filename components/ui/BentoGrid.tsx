@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
 
+// Also install this npm i --save-dev @types/react-lottie
 import Lottie from "react-lottie";
 
 import { cn } from "@/lib/utils";
 
 import { BackgroundGradientAnimation } from "./GradientBg";
-
-import animationData from "../../data/confetti.json";
+import animationData from "@/data/confetti.json";
 import MagicButton from "../MagicButton";
 
 export const BentoGrid = ({
@@ -176,7 +176,7 @@ export const BentoGridItem = ({
                   copied ? "block" : "block"
                 }`}
               >
-                <img src="/confetti.gif" alt="confetti" />
+                {/* <img src="/confetti.gif" alt="confetti" /> */}
                 <Lottie options={defaultOptions} height={200} width={400} />
               </div>
 
