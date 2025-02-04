@@ -5,7 +5,6 @@ import ThreeGlobe from "three-globe";
 import { useThree, Object3DNode, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "@/data/globe.json";
-
 declare module "@react-three/fiber" {
   interface ThreeElements {
     threeGlobe: Object3DNode<ThreeGlobe, typeof ThreeGlobe>;
@@ -73,7 +72,6 @@ export function Globe({ globeConfig, data }: WorldProps) {
     | null
   >(null);
 
-  const [isClient, setIsClient] = useState(false); // New state to check if it's client-side
   const globeRef = useRef<ThreeGlobe | null>(null);
 
   const defaultProps = {
@@ -93,16 +91,12 @@ export function Globe({ globeConfig, data }: WorldProps) {
     ...globeConfig,
   };
 
-  // Check if window is available and set state to true (client-side)
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient || !globeRef.current) return;
-    _buildData();
-    _buildMaterial();
-  }, [isClient, globeRef.current]);
+    if (globeRef.current) {
+      _buildData();
+      _buildMaterial();
+    }
+  }, [globeRef.current]);
 
   const _buildMaterial = () => {
     if (!globeRef.current) return;
@@ -141,7 +135,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       });
     }
 
-    // Remove duplicates for same lat and lng
+    // remove duplicates for same lat and lng
     const filteredPoints = points.filter(
       (v, i, a) =>
         a.findIndex((v2) =>
@@ -155,19 +149,20 @@ export function Globe({ globeConfig, data }: WorldProps) {
   };
 
   useEffect(() => {
-    if (!isClient || !globeRef.current || !globeData) return;
-    globeRef.current
-      .hexPolygonsData(countries.features)
-      .hexPolygonResolution(3)
-      .hexPolygonMargin(0.7)
-      .showAtmosphere(defaultProps.showAtmosphere)
-      .atmosphereColor(defaultProps.atmosphereColor)
-      .atmosphereAltitude(defaultProps.atmosphereAltitude)
-      .hexPolygonColor((e) => {
-        return defaultProps.polygonColor;
-      });
-    startAnimation();
-  }, [isClient, globeData]);
+    if (globeRef.current && globeData) {
+      globeRef.current
+        .hexPolygonsData(countries.features)
+        .hexPolygonResolution(3)
+        .hexPolygonMargin(0.7)
+        .showAtmosphere(defaultProps.showAtmosphere)
+        .atmosphereColor(defaultProps.atmosphereColor)
+        .atmosphereAltitude(defaultProps.atmosphereAltitude)
+        .hexPolygonColor((e) => {
+          return defaultProps.polygonColor;
+        });
+      startAnimation();
+    }
+  }, [globeData]);
 
   const startAnimation = () => {
     if (!globeRef.current || !globeData) return;
@@ -208,7 +203,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
   };
 
   useEffect(() => {
-    if (!isClient || !globeRef.current || !globeData) return;
+    if (!globeRef.current || !globeData) return;
 
     const interval = setInterval(() => {
       if (!globeRef.current || !globeData) return;
@@ -226,20 +221,23 @@ export function Globe({ globeConfig, data }: WorldProps) {
     return () => {
       clearInterval(interval);
     };
-  }, [isClient, globeData]);
+  }, [globeRef.current, globeData]);
 
-  return <>{isClient && <threeGlobe ref={globeRef} />}</>;
+  return (
+    <>
+      <threeGlobe ref={globeRef} />
+    </>
+  );
 }
 
 export function WebGLRendererConfig() {
   const { gl, size } = useThree();
 
   useEffect(() => {
-    if (typeof window === "undefined") return; // Ensure code runs only on client-side
     gl.setPixelRatio(window.devicePixelRatio);
     gl.setSize(size.width, size.height);
     gl.setClearColor(0xffaaff, 0);
-  }, [gl, size]);
+  }, []);
 
   return null;
 }
