@@ -136,7 +136,7 @@ export const BentoGridItem = ({
           </div>
 
           {/* for the github 3d globe */}
-          {/* {id === 2 && <GridGlobe />} */}
+          {id === 2 && <GridGlobe />}
 
           {/* Tech stack list div */}
           {id === 3 && (
@@ -179,8 +179,8 @@ export const BentoGridItem = ({
                   copied ? "block" : "block"
                 }`}
               >
-                {/* <img src="/confetti.gif" alt="confetti" /> */}
-                {/* <Lottie options={defaultOptions} height={200} width={400} /> */}
+                <img src="/confetti.gif" alt="confetti" />
+                <Lottie options={defaultOptions} height={200} width={400} />
               </div>
 
               <MagicButton
